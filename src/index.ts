@@ -1,4 +1,4 @@
-console.log('Hello world!')
+console.log('Hello world')
 
 //POST - Register user
 //GET - All Users
