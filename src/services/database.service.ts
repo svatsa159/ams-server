@@ -7,7 +7,6 @@ export const collections: {
   users?: mongoDB.Collection;
   attendance?: mongoDB.Collection;
 } = {};
-secret: process.env.DB_CONN_STRING as string;
 
 // Initialize Connection
 export async function connectToDatabase() {
