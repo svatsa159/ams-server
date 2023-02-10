@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 export const authRouter = express.Router();
 authRouter.use(express.json());
 
+//Login
 authRouter.post("/login", async (req: Request, res: Response) => {
 
     const username = req?.body.username;
@@ -30,7 +31,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     }
 });
 
-
+//Register
 authRouter.post(
     "/",
     validateIsAdminMiddleware,

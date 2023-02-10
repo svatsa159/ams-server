@@ -1,4 +1,3 @@
-// External Dependencies
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
@@ -6,7 +5,6 @@ import User from "../models/user";
 import {validateIsAdminMiddleware} from "../middlewares/isAdmin";
 import {validateUserIdMiddleware} from "../middlewares/isUser";
 
-// Global Config
 export const usersRouter = express.Router();
 usersRouter.use(express.json());
 

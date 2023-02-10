@@ -6,9 +6,6 @@ export const validateUserIdMiddleware = (
     res: Response,
     next: NextFunction
 ) => {
-    // Tokens are generally passed in header of request
-    // Due to security reasons.
-
     let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
