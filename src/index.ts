@@ -9,14 +9,14 @@ console.log("Hello world");
 // Collection : Attendance
 //POST - Mark attendance of user (add, update?)- admin -ok
 //GET/:id - Single User's attendance - user specific from token
-const cors = require('cors')
+const cors = require("cors");
 const express = require("express");
 
 const dotenv = require("dotenv");
 
 const app: Express = express();
 
-app.use(cors())
+app.use(cors());
 
 // Set up Global configuration access
 dotenv.config();

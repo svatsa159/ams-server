@@ -1,8 +1,8 @@
 // External Dependencies
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
 import Attendance from "../models/attendance";
+import { validateIsAdminMiddleware } from "../middlewares/isAdmin";
 
 // Global Config
 export const attendanceRouter = express.Router();
@@ -10,46 +10,70 @@ export const attendanceRouter = express.Router();
 attendanceRouter.use(express.json());
 
 // POST
-attendanceRouter.post("/", async (req: Request, res: Response) => {
-  try {
-    const newAttendance = req.body as Attendance;
-    console.log(req);
+attendanceRouter.post(
+  "/",
+  validateIsAdminMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const newAttendance = req.body as Attendance;
 
-    const query = { date: new ObjectId(newAttendance.date) };
-    const exists = (await collections.attendance?.find(
-      query
-    )) as unknown as Attendance;
-
-    let result;
-
-    if (exists?.date) {
-      result = await collections.attendance?.updateOne(
-        { _id: exists?.date },
-        {
-          $addToSet: {
-            sizes: {
-              $each: newAttendance.users,
+      const query = { date: newAttendance.date };
+      const exists = (await collections.attendance?.findOne(
+        query
+      )) as unknown as Attendance;
+      let result;
+      if (exists?.date === null || exists?.date === undefined) {
+        result = await collections.attendance?.insertOne(newAttendance);
+      } else {
+        let currentUsers = exists?.users;
+        result = await collections.attendance?.updateOne(
+          { date: newAttendance?.date },
+          {
+            $push: {
+              users: {
+                $each: newAttendance?.users
+                  .filter((i) => !currentUsers.includes(i))
+                  .map((i) => i.toString()),
+              },
             },
-          },
-        }
-      );
-
-      console.log("if");
-    } else {
-      result = await collections.attendance?.insertOne(newAttendance);
-      console.log("else");
+          }
+        );
+      }
+      result
+        ? res
+            .status(201)
+            .send(`Successfully created new attendace with id ${result}`)
+        : res.status(500).send("Failed to create a new attendance.");
+    } catch (error) {
+      console.error(error);
+      res.status(400).send(error instanceof Error ? error.message : "");
     }
-
-    result
-      ? res
-          .status(201)
-          .send(`Successfully created new attendace with id ${result}`)
-      : res.status(500).send("Failed to create a new attendance.");
-  } catch (error) {
-    console.error(error);
-    res.status(400).send(error instanceof Error ? error.message : "");
   }
-});
+);
+
+// Get attendace by id
+attendanceRouter.get(
+  "/:id",
+  validateIsAdminMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const id = req?.params?.id;
+      console.log(id);
+      const exists: Attendance[] = (await collections.attendance
+        ?.find({ users: { $elemMatch: { $eq: id.toString() } } })
+        .toArray())!;
+
+      console.log(exists);
+      res.send(exists.map((e) => e.date));
+    } catch (error) {
+      res
+        .status(404)
+        .send(`Unable to find matching document with id: ${req.params.id}`);
+      console.log(error);
+    }
+  }
+);
+
 // PUT
 // usersRouter.put("/:id", async (req: Request, res: Response) => {
 //   const id = req?.params?.id;

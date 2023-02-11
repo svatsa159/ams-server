@@ -1,9 +1,11 @@
 import * as mongoDB from "mongodb";
 import * as dotenv from "dotenv";
+import Attendance from "../models/attendance";
+import User from "../models/user";
 
 export const collections: {
-  users?: mongoDB.Collection;
-  attendance?: mongoDB.Collection;
+  users?: mongoDB.Collection<User>;
+  attendance?: mongoDB.Collection<Attendance>;
 } = {};
 
 // Initialize Connection
@@ -18,13 +20,13 @@ export async function connectToDatabase() {
 
   const db: mongoDB.Db = client.db(process.env.DB_NAME);
 
-  const userCollection: mongoDB.Collection = db.collection(
+  const userCollection: mongoDB.Collection<User> = db.collection(
     process.env.USER_COLLECTION as string
   );
 
   collections.users = userCollection;
 
-  const attendanceCollection: mongoDB.Collection = db.collection(
+  const attendanceCollection: mongoDB.Collection<Attendance> = db.collection(
     process.env.ATTENDANCE_COLLECTION as string
   );
 
