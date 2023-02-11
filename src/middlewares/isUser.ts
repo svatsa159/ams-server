@@ -17,7 +17,17 @@ export const validateUserIdMiddleware = (
       const userId = verified.userId;
       console.log("Got id : " + userId);
       res.locals.id = userId;
-      next();
+      console.log(req?.params?.id)
+      if(req?.params?.id !== undefined){
+        if(userId !== req?.params?.id){
+          res.status(403).send();
+        }else{
+          next();
+        }
+      }else{
+        next();
+      }
+
     } else {
       // Access Denied
       res.status(401).send();

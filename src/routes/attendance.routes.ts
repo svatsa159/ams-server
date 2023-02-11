@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
 import Attendance from "../models/attendance";
 import { validateIsAdminMiddleware } from "../middlewares/isAdmin";
+import {validateUserIdMiddleware} from "../middlewares/isUser";
 
 // Global Config
 export const attendanceRouter = express.Router();
@@ -54,7 +55,7 @@ attendanceRouter.post(
 // Get attendace by id
 attendanceRouter.get(
   "/:id",
-  validateIsAdminMiddleware,
+  validateUserIdMiddleware,
   async (req: Request, res: Response) => {
     try {
       const id = req?.params?.id;
