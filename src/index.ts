@@ -27,7 +27,7 @@ connectToDatabase()
     app.use("/attendance", attendanceRouter);
     app.use("/auth", authRouter);
 
-    let PORT = process.env.PORT || 5000;
+    let PORT = 3000;
     app.listen(PORT, () => {
       console.log(`Server is up and running on ${PORT} ...`);
     });
